@@ -10,3 +10,5 @@
    with the notes saved in localStorage. You'll need to
    use JSON.parse() to turn the stringified array back
    into a real JS array.
+
+> Result to complete on my own `Fail 🥲`
