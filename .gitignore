@@ -1,0 +1,7 @@
+# ignores all .md files
+.md
+
+node_modules/
+build/
+.DS_Store
+/.changelog
