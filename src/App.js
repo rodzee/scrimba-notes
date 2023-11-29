@@ -13,6 +13,7 @@ export default function App() {
     (notes[0] && notes[0].id) || "",
   );
 
+  // This is where the code for the 1st challenge was
   useEffect(() => {
     localStorage.setItem("notes", JSON.stringify(notes));
   }, [notes]);
