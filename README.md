@@ -34,3 +34,5 @@
 
    **_Hint 2:_** _See if you can split the string into an array
    using the "\n" newline character as the divider_
+
+> Result to complete on my own `Success 😀`
