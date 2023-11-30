@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Editor from "./components/Editor";
 // import { data } from "./data";
 import Split from "react-split";
 import { nanoid } from "nanoid";
 
+// the function inside useState is to lazily init the state
+// you can use an implicit function () => for a more consize code
 export default function App() {
-  const [notes, setNotes] = React.useState(
-    JSON.parse(localStorage.getItem("notes")) || [],
-  );
-  const [currentNoteId, setCurrentNoteId] = React.useState(
+  const [notes, setNotes] = useState(function () {
+    return JSON.parse(localStorage.getItem("notes") || []);
+  });
+  const [currentNoteId, setCurrentNoteId] = useState(
     (notes[0] && notes[0].id) || "",
   );
 

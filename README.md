@@ -12,3 +12,11 @@
    into a real JS array.
 
 > Result to complete on my own `Fail 🥲`
+
+## Second Challenge
+
+1. Lazily initialize our `notes` state so it doesn't
+   reach into localStorage on every single re-render
+   of the App component
+
+> Result to complete on my own `Success 😀`
