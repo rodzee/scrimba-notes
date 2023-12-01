@@ -36,3 +36,10 @@
    using the "\n" newline character as the divider_
 
 > Result to complete on my own `Success 😀`
+
+## Fourth Challenge
+
+1. When the user edits a note, reposition
+   it in the list of notes to the top of the list
+
+> Result to complete on my own `Close, but no cigar 🤦🥲`

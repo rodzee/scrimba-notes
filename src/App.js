@@ -15,7 +15,7 @@ export default function App() {
     (notes[0] && notes[0].id) || "",
   );
 
-  // This is where the code for the 1st challenge was
+  // This is where the code(answer) for the 1st challenge was
   useEffect(() => {
     localStorage.setItem("notes", JSON.stringify(notes));
   }, [notes]);
@@ -30,17 +30,38 @@ export default function App() {
     setCurrentNoteId(newNote.id);
   }
 
-  // Checks if new note does not have the same id and updates it
+  // This rearranges the notes and puts the most recently modified on the top
   function updateNote(text) {
-    setNotes((oldNotes) =>
-      oldNotes.map((oldNote) => {
-        return oldNote.id === currentNoteId
-          ? { ...oldNote, body: text }
-          : oldNote;
-      }),
-    );
+    setNotes((oldNotes) => {
+      const newArray = [];
+      for (let i = 0; i < oldNotes.length; i++) {
+        const oldNote = oldNotes[i];
+        if (oldNote.id === currentNoteId) {
+          newArray.unshift({ ...oldNote, body: text });
+        } else {
+          newArray.push(oldNote);
+        }
+      }
+      return newArray;
+    });
   }
 
+  // This does not work to rearrange the notes
+  //** the code above is the correct version **
+  //
+  //   function updateNote(text) {
+  //     setNotes((oldNotes) =>
+  //       oldNotes.map((oldNote) => {
+  //         return oldNote.id === currentNoteId
+  //           ? { ...oldNote, body: text }
+  //           : oldNote,
+  // ;
+  //       }),
+  //     );
+  //   }
+
+  // This function helps find the correct id so it can be highlited with a different color
+  // ** check the Sidebar component **
   function findCurrentNote() {
     return (
       notes.find((note) => {
