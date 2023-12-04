@@ -9,10 +9,18 @@ export default function Sidebar(props) {
         }`}
         onClick={() => props.setCurrentNoteId(note.id)}
       >
-        <h4 className="text-snippet-number">{index + 1 + " -"}</h4>
-        <h4 className="text-snippet">
-          {note.body.includes("\n") ? note.body.split("\n")[0] : note.body}
-        </h4>
+        <div className="text-snippet-group">
+          <h4 className="text-snippet-number">{index + 1 + " -"}</h4>
+          <h4 className="text-snippet">
+            {note.body.includes("\n") ? note.body.split("\n")[0] : note.body}
+          </h4>
+        </div>
+        <button
+          className="delete-btn"
+          onClick={(event) => props.deleteNote(event, note.id)}
+        >
+          <i className="gg-trash trash-icon"></i>
+        </button>
       </div>
     </div>
   ));

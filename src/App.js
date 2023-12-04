@@ -60,6 +60,11 @@ export default function App() {
   //     );
   //   }
 
+  function deleteNote(event, noteId) {
+    event.stopPropagation();
+    setNotes((oldNotes) => oldNotes.filter((note) => note.id !== noteId));
+  }
+
   // This function helps find the correct id so it can be highlited with a different color
   // ** check the Sidebar component **
   function findCurrentNote() {
@@ -79,6 +84,7 @@ export default function App() {
             currentNote={findCurrentNote()}
             setCurrentNoteId={setCurrentNoteId}
             newNote={createNewNote}
+            deleteNote={deleteNote}
           />
           {currentNoteId && notes.length > 0 && (
             <Editor currentNote={findCurrentNote()} updateNote={updateNote} />

@@ -43,3 +43,17 @@
    it in the list of notes to the top of the list
 
 > Result to complete on my own `Close, but no cigar 🤦🥲`
+
+## Fifth Challenge
+
+1. Complete and implement the deleteNote function
+
+   **_Hint 1:_** _What array method can be used to return a new
+   array that has filtered out an item based
+   on a condition?_
+
+   **_Hint 2:_** _Notice the parameters being based to the function
+   and think about how both of those parameters
+   can be passed in during the onClick event handler_
+
+> Result to complete on my own `Once again, so close 😭`
