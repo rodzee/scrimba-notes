@@ -1,33 +1,45 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Editor from "./components/Editor";
-// import { data } from "./data";
 import Split from "react-split";
-import { nanoid } from "nanoid";
+import { notesCollection, db } from "./firebase";
 
-// the function inside useState is to lazily init the state
-// you can use an implicit function () => for a more consize code
+// onSnapshot listens for changes in the FS database and updates the local code
+import { doc, addDoc, onSnapshot, deleteDoc } from "firebase/firestore";
+
 export default function App() {
-  const [notes, setNotes] = useState(function () {
-    return JSON.parse(localStorage.getItem("notes") || []);
-  });
-  const [currentNoteId, setCurrentNoteId] = useState(
-    (notes[0] && notes[0].id) || "",
-  );
+  const [notes, setNotes] = useState([]);
+
+  // This code can be done with the "Optinal Channing Operator (?)"
+  // const [currentNoteId, setCurrentNoteId] = useState(
+  //   (notes[0] && notes[0].id) || "",
+  // );
+
+  // This is the Optional Channing version
+  const [currentNoteId, setCurrentNoteId] = useState(notes[0]?.id || "");
 
   // This is where the code(answer) for the 1st challenge was
   useEffect(() => {
-    localStorage.setItem("notes", JSON.stringify(notes));
-  }, [notes]);
+    const unsubscribe = onSnapshot(notesCollection, function (snapshot) {
+      // Sync up the local notes array with the snapshot data
+      const notesArr = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setNotes(notesArr);
+    });
+
+    // this function will clean up any listener that was not used
+    return unsubscribe;
+  }, []);
 
   // This function creates a new note and nanoid() generates an id for it
-  function createNewNote() {
+  async function createNewNote() {
     const newNote = {
-      id: nanoid(),
       body: "# Type your markdown note's title here",
     };
-    setNotes((prevNotes) => [newNote, ...prevNotes]);
-    setCurrentNoteId(newNote.id);
+    const newNoteRef = await addDoc(notesCollection, newNote);
+    setCurrentNoteId(newNoteRef.id);
   }
 
   // This rearranges the notes and puts the most recently modified on the top
@@ -60,9 +72,9 @@ export default function App() {
   //     );
   //   }
 
-  function deleteNote(event, noteId) {
-    event.stopPropagation();
-    setNotes((oldNotes) => oldNotes.filter((note) => note.id !== noteId));
+  async function deleteNote(noteId) {
+    const docRef = doc(db, "notes", noteId);
+    await deleteDoc(docRef);
   }
 
   // This function helps find the correct id so it can be highlited with a different color
