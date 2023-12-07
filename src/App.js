@@ -5,7 +5,7 @@ import Split from "react-split";
 import { notesCollection, db } from "./firebase";
 
 // onSnapshot listens for changes in the FS database and updates the local code
-import { doc, addDoc, onSnapshot, deleteDoc } from "firebase/firestore";
+import {  onSnapshot, doc, addDoc, deleteDoc, setDoc} from "firebase/firestore";
 
 export default function App() {
   const [notes, setNotes] = useState([]);
@@ -43,19 +43,9 @@ export default function App() {
   }
 
   // This rearranges the notes and puts the most recently modified on the top
-  function updateNote(text) {
-    setNotes((oldNotes) => {
-      const newArray = [];
-      for (let i = 0; i < oldNotes.length; i++) {
-        const oldNote = oldNotes[i];
-        if (oldNote.id === currentNoteId) {
-          newArray.unshift({ ...oldNote, body: text });
-        } else {
-          newArray.push(oldNote);
-        }
-      }
-      return newArray;
-    });
+ async function updateNote(text) {
+    const docRef = doc(db, 'notes', currentNoteId)
+    await setDoc(docRef, {body: text}, {merge: true})
   }
 
   // This does not work to rearrange the notes
