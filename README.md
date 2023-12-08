@@ -57,3 +57,17 @@
    can be passed in during the onClick event handler_
 
 > Result to complete on my own `Once again, so close 😭`
+
+## Sixth Challenge
+
+1. Add createdAt and updatedAt properties to the notes
+   When a note is first created, set the `createdAt` and `updatedAt`
+   properties to `Date.now()`. Whenever a note is modified, set the
+   `updatedAt` property to `Date.now()`.
+
+2. Create a new `sortedNotes` array (doesn't need to be saved
+   in state) that orders the items in the array from
+   most-recently-updated to least-recently-updated.
+   This may require a quick Google search.
+
+> Result to complete on my own `Try to guess it just by looking at the emoji 😭`

@@ -5,7 +5,7 @@ import Split from "react-split";
 import { notesCollection, db } from "./firebase";
 
 // onSnapshot listens for changes in the FS database and updates the local code
-import {  onSnapshot, doc, addDoc, deleteDoc, setDoc} from "firebase/firestore";
+import { onSnapshot, doc, addDoc, deleteDoc, setDoc } from "firebase/firestore";
 
 export default function App() {
   const [notes, setNotes] = useState([]);
@@ -17,6 +17,8 @@ export default function App() {
 
   // This is the Optional Channing version
   const [currentNoteId, setCurrentNoteId] = useState(notes[0]?.id || "");
+
+  const sortedNotes = notes.sort((a, b) => b.updatedAt - a.updatedAt);
 
   // This is where the code(answer) for the 1st challenge was
   useEffect(() => {
@@ -33,19 +35,24 @@ export default function App() {
     return unsubscribe;
   }, []);
 
-  // This function creates a new note and nanoid() generates an id for it
   async function createNewNote() {
     const newNote = {
       body: "# Type your markdown note's title here",
+      createAt: Date.now(),
+      updatedAt: Date.now(),
     };
     const newNoteRef = await addDoc(notesCollection, newNote);
     setCurrentNoteId(newNoteRef.id);
   }
 
   // This rearranges the notes and puts the most recently modified on the top
- async function updateNote(text) {
-    const docRef = doc(db, 'notes', currentNoteId)
-    await setDoc(docRef, {body: text}, {merge: true})
+  async function updateNote(text) {
+    const docRef = doc(db, "notes", currentNoteId);
+    await setDoc(
+      docRef,
+      { body: text, updatedAt: Date.now() },
+      { merge: true },
+    );
   }
 
   // This does not work to rearrange the notes
@@ -82,7 +89,7 @@ export default function App() {
       {notes.length > 0 ? (
         <Split sizes={[30, 70]} direction="horizontal" className="split">
           <Sidebar
-            notes={notes}
+            notes={sortedNotes}
             currentNote={findCurrentNote()}
             setCurrentNoteId={setCurrentNoteId}
             newNote={createNewNote}
