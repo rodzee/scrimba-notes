@@ -8,32 +8,46 @@ import { notesCollection, db } from "./firebase";
 import { onSnapshot, doc, addDoc, deleteDoc, setDoc } from "firebase/firestore";
 
 export default function App() {
-  const [notes, setNotes] = useState([]);
+    const [notes, setNotes] = useState([]);
+    const [currentNoteId, setCurrentNoteId] = useState('');
+    const [tempNoteText, setTempNoteText] = useState('')
 
-  // This code can be done with the "Optinal Channing Operator (?)"
-  // const [currentNoteId, setCurrentNoteId] = useState(
-  //   (notes[0] && notes[0].id) || "",
-  // );
+    const currentNote = notes.find(note => note.id === currentNoteId ) || notes[0]
+    const sortedNotes = notes.sort((a, b) => b.updatedAt - a.updatedAt);
 
-  // This is the Optional Channing version
-  const [currentNoteId, setCurrentNoteId] = useState(notes[0]?.id || "");
+    useEffect(() => {
+        const unsubscribe = onSnapshot(notesCollection, function (snapshot) {
+        // Sync up the local notes array with the snapshot data
+        const notesArr = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+        }));
+        setNotes(notesArr);
+        });
+        // this function will clean up any listener that was not used
+        return unsubscribe;
+    }, []);
 
-  const sortedNotes = notes.sort((a, b) => b.updatedAt - a.updatedAt);
+    useEffect (() => {
+        if(!currentNoteId) {
+            setCurrentNoteId(notes[0]?.id)
+        }
+    }, [notes])
 
-  // This is where the code(answer) for the 1st challenge was
-  useEffect(() => {
-    const unsubscribe = onSnapshot(notesCollection, function (snapshot) {
-      // Sync up the local notes array with the snapshot data
-      const notesArr = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setNotes(notesArr);
-    });
+    useEffect(() => {
+        if(currentNote) {
+            setTempNoteText(currentNote.body)
+        }
+    }, [currentNote])
 
-    // this function will clean up any listener that was not used
-    return unsubscribe;
-  }, []);
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (tempNoteText !== currentNote.body) {
+                updateNote(tempNoteText)
+            }
+        }, 500);
+        return () => clearTimeout(timeoutId)
+    }, [tempNoteText])
 
   async function createNewNote() {
     const newNote = {
@@ -55,49 +69,23 @@ export default function App() {
     );
   }
 
-  // This does not work to rearrange the notes
-  //** the code above is the correct version **
-  //
-  //   function updateNote(text) {
-  //     setNotes((oldNotes) =>
-  //       oldNotes.map((oldNote) => {
-  //         return oldNote.id === currentNoteId
-  //           ? { ...oldNote, body: text }
-  //           : oldNote,
-  // ;
-  //       }),
-  //     );
-  //   }
-
   async function deleteNote(noteId) {
     const docRef = doc(db, "notes", noteId);
     await deleteDoc(docRef);
   }
-
-  // This function helps find the correct id so it can be highlited with a different color
-  // ** check the Sidebar component **
-  function findCurrentNote() {
-    return (
-      notes.find((note) => {
-        return note.id === currentNoteId;
-      }) || notes[0]
-    );
-  }
-
+    
   return (
     <main>
       {notes.length > 0 ? (
         <Split sizes={[30, 70]} direction="horizontal" className="split">
           <Sidebar
             notes={sortedNotes}
-            currentNote={findCurrentNote()}
+            currentNote={currentNote}
             setCurrentNoteId={setCurrentNoteId}
             newNote={createNewNote}
             deleteNote={deleteNote}
           />
-          {currentNoteId && notes.length > 0 && (
-            <Editor currentNote={findCurrentNote()} updateNote={updateNote} />
-          )}
+            <Editor tempNoteText={tempNoteText} setTempNoteText={setTempNoteText} />
         </Split>
       ) : (
         <div className="no-notes">
